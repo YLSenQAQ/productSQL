@@ -71,7 +71,7 @@ def print_ecs_instance_product_attr_enum():
     family = {}
     enum_values = []
     seq = 0
-    print("instance type")
+    print("----------------------ecs instance type----------------------------")
 
     print(SQL_INS_product_attr_enum)
     for row in range(First_Value_row, nrows):
@@ -108,7 +108,7 @@ def print_ecs_instance_product_attr_enum():
                + str(seq)
                + "),")
         print(sql)
-    print("faaaaaammmily")
+    print("----------------------------ecs family---------------------------------")
     seq = 0
     print(SQL_INS_product_attr_enum)
     for e in family:
@@ -125,8 +125,8 @@ def print_ecs_instance_product_attr_enum():
                + str(seq)
                + "),")
         print(sql)
-
-    print("10070 pricing traffic tbd")
+#todo 这部分只是为了生成临时脚本
+    print("--------------------------10070 pricing traffic tbd--------------------------")
     print(SQL_INS_pricing_tariff)
     tbdPricing = 0
     for enum_value in enum_values:
