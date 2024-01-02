@@ -1,4 +1,5 @@
 # This is a sample Python script.
+from decimal import Decimal, ROUND_HALF_UP
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
@@ -26,6 +27,8 @@ GPU_Specifications = "GPU Specifications"
 Bandwidth = "Internal Network Bandwidth (Gbit/s)"
 MemoryNum = "Memory (GiB)"
 Category = "Category"
+SUB = "包年包月"
+PAYG = "按量付费"
 
 Attr_enum_code_row = 1
 First_Value_row = 1
@@ -125,18 +128,24 @@ def print_ecs_instance_product_attr_enum():
                + str(seq)
                + "),")
         print(sql)
-#todo 这部分只是为了生成临时脚本
-    print("--------------------------10070 pricing traffic tbd--------------------------")
+
+    print("--------------------------10070 instanceType pricing traffic --------------------------")
     print(SQL_INS_pricing_tariff)
-    tbdPricing = 0
+    col_SUB = getColByValue(sheet1_object, SUB)
+    col_PAYG = getColByValue(sheet1_object, PAYG)
+
     for enum_value in enum_values:
-        tbdPricing = tbdPricing + 1
+        enum_value_row = getRowByValueWithCol(sheet1_object, col_InstanceType, enum_value)
+        sub_Pricing = (Decimal(sheet1_object.cell(enum_value_row, col_SUB).value)
+                       .quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
+        payg_Pricing = (Decimal(sheet1_object.cell(enum_value_row, col_PAYG).value)
+                        .quantize(Decimal('0.00'), rounding=ROUND_HALF_UP))
         sql_PBH = ("(" + SQL_ItemIdPBH + Comma
                    + SQL_ItemIdPBH + Comma
                    + SQL_NULL + Comma
                    + addFormat(enum_value) + Comma
                    + SQL_NULL + Comma + SQL_NULL + Comma + SQL_NULL + Comma + SQL_NULL + Comma + SQL_NULL + Comma
-                   + str(tbdPricing) + Comma
+                   + str(payg_Pricing) + Comma
                    + SQL_UUID
                    + "),")
         sql_SUB = ("(" + SQL_ItemIdSUB + Comma
@@ -144,7 +153,7 @@ def print_ecs_instance_product_attr_enum():
                    + SQL_NULL + Comma
                    + addFormat(enum_value) + Comma
                    + SQL_NULL + Comma + SQL_NULL + Comma + SQL_NULL + Comma + SQL_NULL + Comma + SQL_NULL + Comma
-                   + str(tbdPricing * 30) + Comma
+                   + str(sub_Pricing) + Comma
                    + SQL_UUID
                    + "),")
         print(sql_PBH)
@@ -155,6 +164,14 @@ def getColByValue(sheet, value):
     for col in range(sheet.ncols):
         if value in sheet.col_values(col):
             return col
+    return -1
+
+
+# 已知行获取列
+def getRowByValueWithCol(sheet, colIndex, value):
+    for row in range(sheet.nrows):
+        if value == sheet.cell(row, colIndex).value:
+            return row
     return -1
 
 
